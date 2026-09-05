@@ -76,7 +76,7 @@ The live application includes 5 pre-configured simulation scenarios accessible v
 ## 🏗️ System Architecture
 
 <div align="center">
-  <img src="./architecture.png" alt="Recovery Copilot System Architecture" width="100%" />
+  <img src="./system-architecture.png" alt="Recovery Copilot System Architecture" width="100%" />
 </div>
 
 ---

@@ -75,64 +75,9 @@ The live application includes 5 pre-configured simulation scenarios accessible v
 
 ## 🏗️ System Architecture
 
-```mermaid
-flowchart TB
-    subgraph APP["RECOVERY COPILOT CORE"]
-        direction TB
-
-        subgraph BACKEND["FASTAPI BACKEND"]
-            direction TB
-            PY["<b>Python 3.13</b><br/>Port 8000"]
-            APIS["<b>REST APIs</b><br/>• /api/batch/run<br/>• /api/cases<br/>• /api/metrics/summary<br/>• /api/compliance/config<br/>• /api/audit"]
-        end
-
-        subgraph FRONTEND["REACT 19 FRONTEND"]
-            direction TB
-            DASH["DashboardView"]
-            AUTO["AutomationView"]
-            EVENTS["EventsView"]
-            PERF["ModelPerformance"]
-            DRILL["EventDrillDown"]
-            RUNNER["BatchRunner"]
-        end
-
-        FRONTEND <-->|"REST / JSON"| BACKEND
-    end
-
-    subgraph OFFLINE_BOX["OFFLINE SIMULATION"]
-        direction TB
-        EXEC["<b>executionEngine.ts</b><br/>Deterministic Fallback Engine"]
-    end
-
-    RUNNER -.->|"Fallback"| OFFLINE_BOX
-
-    subgraph PIPELINE["SERVICES PIPELINE"]
-        direction LR
-        S1["synthetic.py"] --> S2["classifier.py<br/><i>Claude</i>"] --> S3["compliance.py"] --> S4["strategy.py<br/><i>Claude</i>"] --> S5["actions.py<br/><i>Razorpay</i>"] --> S6["scheduler.py<br/><i>APScheduler</i>"] --> S7["audit.py<br/><i>Immutable</i>"]
-    end
-
-    subgraph DB["SQLITE • SQLALCHEMY ORM"]
-        direction LR
-        D1["cases"] ~~~ D2["diagnoses"] ~~~ D3["actions"] ~~~ D4["audit_log"] ~~~ D5["opt_outs"] ~~~ D6["config"]
-    end
-
-    BACKEND --> PIPELINE
-    PIPELINE --> DB
-
-    classDef backendStyle fill:#1C202B,stroke:#F59E0B,stroke-width:2px,color:#E2E2E9;
-    classDef frontendStyle fill:#1C202B,stroke:#2F6FED,stroke-width:2px,color:#E2E2E9;
-    classDef offlineStyle fill:#2A1B28,stroke:#EC4899,stroke-width:2px,color:#E2E2E9;
-    classDef pipelineStyle fill:#221E33,stroke:#8B5CF6,stroke-width:2px,color:#E2E2E9;
-    classDef dbStyle fill:#13231B,stroke:#10B981,stroke-width:2px,color:#E2E2E9;
-    classDef coreStyle fill:#171A21,stroke:#2A2E3A,stroke-width:2px,color:#E2E2E9;
-
-    class BACKEND,PY,APIS backendStyle;
-    class FRONTEND,DASH,AUTO,EVENTS,PERF,DRILL,RUNNER frontendStyle;
-    class OFFLINE_BOX,EXEC offlineStyle;
-    class PIPELINE,S1,S2,S3,S4,S5,S6,S7 pipelineStyle;
-    class DB,D1,D2,D3,D4,D5,D6 dbStyle;
-    class APP coreStyle;
-```
+<div align="center">
+  <img src="./architecture.png" alt="Recovery Copilot System Architecture" width="100%" />
+</div>
 
 ---
 

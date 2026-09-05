@@ -25,7 +25,7 @@ def run_batch_evaluation(
     """
     Executes End-to-End Batch Recovery Pipeline:
     1. Ingests synthetic transactions for the requested scenario
-    2. Runs Claude/Gemini root cause classification (`classify_failure`)
+    2. Runs Gemini 2.5 Flash / Heuristic root cause classification (`classify_failure`)
     3. Runs policy compliance guardrails (Opt-out, Freeze, Escalation, Frequency)
     4. Runs Strategy Agent decision (`decide_recovery_action`)
     5. Writes Decision-First Audit Trail

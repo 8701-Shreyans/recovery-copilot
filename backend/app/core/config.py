@@ -12,9 +12,9 @@ class Settings(BaseSettings):
     # Database
     DATABASE_URL: str = "sqlite:///./recovery_copilot.db"
 
-    # LLM Providers (Claude primary, Gemini fallback)
-    ANTHROPIC_API_KEY: Optional[str] = None
+    # LLM Providers (Gemini 2.5 Flash is Primary, Claude is Optional)
     GEMINI_API_KEY: Optional[str] = None
+    ANTHROPIC_API_KEY: Optional[str] = None
 
     # Razorpay Test API Keys
     RAZORPAY_KEY_ID: Optional[str] = None

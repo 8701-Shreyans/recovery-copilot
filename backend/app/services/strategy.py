@@ -124,13 +124,56 @@ def heuristic_decide_action(case_data: Dict[str, Any], diagnosis_data: Dict[str,
             strategy_rationale="Unclassified failure mode requires manual ops intervention."
         )
 
+_gemini_strat_active = True
+
 def decide_recovery_strategy(
     case_data: Dict[str, Any], 
     diagnosis_data: Dict[str, Any]
 ) -> Tuple[DecideRecoveryActionToolOutput, str]:
     """
-    Executes recovery strategy selection using Claude 3.5 tool call or deterministic expert engine.
+    Executes recovery strategy selection using Gemini 2.5 Flash structured tool/JSON, Claude, or deterministic expert engine.
     """
+    global _gemini_strat_active
+
+    # 1. Primary: Gemini API
+    if _gemini_strat_active and settings.GEMINI_API_KEY and not settings.GEMINI_API_KEY.startswith("sample-gemini"):
+        try:
+            import httpx
+            prompt = f"""You are Recovery Copilot Strategy Agent.
+Given this transaction case and root-cause diagnosis, formulate the best tactical recovery action and respond ONLY in valid JSON matching this schema:
+{{
+  "action_type": "Retry Flow A" | "Retry Flow B" | "Soft Retry" | "WhatsApp Prompt" | "SMS Prompt" | "Email Prompt" | "Promise to Pay" | "Escalate" | "Stand Down",
+  "channel": "GATEWAY" | "WHATSAPP" | "SMS" | "EMAIL" | "MANUAL_OPS",
+  "message_body": string or null,
+  "recommended_delay_hours": int,
+  "strategy_rationale": "Justification for chosen action and communication timing"
+}}
+
+Case: {json.dumps(case_data, indent=2)}
+Diagnosis: {json.dumps(diagnosis_data, indent=2)}"""
+
+            payload = {
+                "contents": [{"parts": [{"text": prompt}]}],
+                "generationConfig": {"responseMimeType": "application/json"}
+            }
+            with httpx.Client(timeout=3.5) as client:
+                res = client.post(
+                    f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={settings.GEMINI_API_KEY}",
+                    json=payload
+                )
+                if res.status_code == 200:
+                    raw_data = res.json()
+                    text_content = raw_data["candidates"][0]["content"]["parts"][0]["text"]
+                    data = json.loads(text_content)
+                    output = DecideRecoveryActionToolOutput(**data)
+                    return output, "gemini-2.5-flash"
+                else:
+                    _gemini_strat_active = False
+        except Exception as e:
+            _gemini_strat_active = False
+            print(f"[Strategy] Gemini API call failed, falling back: {e}")
+
+    # 2. Secondary: Claude API (Optional)
     if settings.ANTHROPIC_API_KEY and not settings.ANTHROPIC_API_KEY.startswith("sk-ant-api03-sample"):
         try:
             import anthropic
@@ -156,5 +199,6 @@ Diagnosis: {json.dumps(diagnosis_data, indent=2)}"""
         except Exception as e:
             print(f"[Strategy] Claude API call failed, falling back: {e}")
 
+    # 3. Heuristic Engine (Deterministic Fallback)
     output = heuristic_decide_action(case_data, diagnosis_data)
     return output, "heuristic-rule-engine"

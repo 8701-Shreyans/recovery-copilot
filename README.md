@@ -44,7 +44,7 @@ Indian SaaS and fintech platforms lose **8–15% of recurring subscription reven
 1. **Blindly retry** transactions, causing high failure rates, bank penalties, and customer irritation.
 2. **Route to manual support desks**, which is slow, expensive, and fails to scale during month-end spikes.
 
-**Recovery Copilot** automates this lifecycle by combining **LLM tool-calling diagnosis** (Claude 3.5 Sonnet & Gemini) with **deterministic compliance guardrails** (RBI mandate rules, DND registries, and frequency caps), recovering revenue safely, compliantly, and transparently.
+**Recovery Copilot** automates this lifecycle by combining **LLM tool-calling diagnosis** (Gemini 2.5 Flash & Heuristics) with **deterministic compliance guardrails** (RBI mandate rules, DND registries, and frequency caps), recovering revenue safely, compliantly, and transparently.
 
 ---
 
@@ -87,7 +87,7 @@ The live application includes 5 pre-configured simulation scenarios accessible v
   [1. Ingestion]           Raw transaction failure event (Amount, Bank, Failure Code, Retry Count)
         │
         ▼
-  [2. Classify]            Claude 3.5 Sonnet Tool Call ── Predicts root cause, probability & feature weights
+  [2. Classify]            Gemini 2.5 Flash Structured Tool Call ── Predicts root cause, probability & feature weights
         │
         ▼
   [3. Pre-Action Log]      Immutable audit record written BEFORE touching external payment/messaging rails
@@ -96,7 +96,7 @@ The live application includes 5 pre-configured simulation scenarios accessible v
   [4. Guardrail Gate]      5 sequential deterministic checks ── ALL MUST PASS or stand-down triggered
         │
         ▼
-  [5. Strategy Dispatch]   Claude 3.5 Sonnet Tool Call ── Determines recovery channel, delay & copy
+  [5. Strategy Dispatch]   Gemini 2.5 Flash Strategy Call ── Determines recovery channel, delay & copy
         │
         ▼
   [6. Execute & Settle]    Razorpay Sandbox capture or messaging dispatch with automatic circuit fallback
@@ -154,9 +154,9 @@ The live application includes 5 pre-configured simulation scenarios accessible v
 </details>
 
 **Model Hierarchy:**
-1. **Claude 3.5 Sonnet** (Primary — state-of-the-art structured tool calling).
-2. **Gemini 2.5 Flash** (Secondary — rate-limit mitigation and high-speed fallback).
-3. **Heuristic Rule Engine** (Deterministic offline fallback — guarantees 100% uptime).
+1. **Gemini 2.5 Flash** (Primary — high throughput structured tool calling & SHAP feature weights).
+2. **Heuristic Rule Engine** (Deterministic offline fallback — guarantees 100% uptime).
+3. **Claude 3.5 Sonnet** (Optional secondary).
 
 ---
 

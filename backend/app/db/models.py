@@ -49,7 +49,7 @@ class Diagnosis(Base):
     confidence = Column(String(16), default="HIGH") # HIGH, MEDIUM, LOW
     recoverable_prob = Column(Float, nullable=False) # 0.0 to 1.0
     reasoning = Column(Text, nullable=False)
-    model_used = Column(String(64), default="claude-3-5-sonnet") # claude-3-5-sonnet, gemini-2.5-flash, rule-heuristic
+    model_used = Column(String(64), default="gemini-2.5-flash") # gemini-2.5-flash, rule-heuristic, claude-3-5-sonnet
     feature_attributions_json = Column(JSON, default=list) # [{ name, weight, impact }]
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
 

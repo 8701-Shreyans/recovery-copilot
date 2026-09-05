@@ -120,14 +120,58 @@ def heuristic_classify_failure(metadata: Dict[str, Any]) -> ClassifyFailureToolO
         feature_attributions=features
     )
 
+_gemini_active = True
+
 def classify_transaction_failure(metadata: Dict[str, Any]) -> Tuple[ClassifyFailureToolOutput, str]:
     """
     Executes failure classification:
-    1. Attempts Claude 3.5 Sonnet tool call if ANTHROPIC_API_KEY is configured.
-    2. Fallback to Gemini if configured.
-    3. Fallback to high-accuracy deterministic heuristic engine.
+    1. Primary: Gemini 2.5 Flash structured JSON diagnosis if GEMINI_API_KEY is configured.
+    2. Optional: Claude 3.5 Sonnet if ANTHROPIC_API_KEY is configured.
+    3. Fallback: High-accuracy deterministic heuristic engine.
     """
-    # 1. Claude API
+    global _gemini_active
+
+    # 1. Primary: Gemini API
+    if _gemini_active and settings.GEMINI_API_KEY and not settings.GEMINI_API_KEY.startswith("sample-gemini"):
+        try:
+            import httpx
+            prompt = f"""You are Recovery Copilot, an expert fintech payment operations diagnosis agent.
+Analyze this failed payment telemetry and respond ONLY in valid JSON matching this schema:
+{{
+  "root_cause": "Category or concise title of root cause",
+  "confidence": "HIGH" | "MEDIUM" | "LOW",
+  "recoverable_probability": float (0.0 to 1.0),
+  "reasoning": "Step-by-step diagnostic reasoning",
+  "feature_attributions": [
+    {{"name": "string", "weight": float, "impact": "positive" | "negative"}}
+  ]
+}}
+
+Telemetry:
+{json.dumps(metadata, indent=2)}"""
+
+            payload = {
+                "contents": [{"parts": [{"text": prompt}]}],
+                "generationConfig": {"responseMimeType": "application/json"}
+            }
+            with httpx.Client(timeout=3.5) as client:
+                res = client.post(
+                    f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={settings.GEMINI_API_KEY}",
+                    json=payload
+                )
+                if res.status_code == 200:
+                    raw_data = res.json()
+                    text_content = raw_data["candidates"][0]["content"]["parts"][0]["text"]
+                    data = json.loads(text_content)
+                    output = ClassifyFailureToolOutput(**data)
+                    return output, "gemini-2.5-flash"
+                else:
+                    _gemini_active = False
+        except Exception as e:
+            _gemini_active = False
+            print(f"[Classifier] Gemini API call failed, falling back: {e}")
+
+    # 2. Secondary: Claude API (Optional)
     if settings.ANTHROPIC_API_KEY and not settings.ANTHROPIC_API_KEY.startswith("sk-ant-api03-sample"):
         try:
             import anthropic
@@ -152,6 +196,6 @@ Analyze this failed payment telemetry and invoke the `classify_failure` tool:
         except Exception as e:
             print(f"[Classifier] Claude API call failed, falling back: {e}")
 
-    # 2. Heuristic Engine (Deterministic Fallback)
+    # 3. Heuristic Engine (Deterministic Fallback)
     output = heuristic_classify_failure(metadata)
     return output, "heuristic-rule-engine"

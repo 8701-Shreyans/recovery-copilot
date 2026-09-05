@@ -29,8 +29,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<'general' | 'models' | 'gateways' | 'security'>('general');
   const [apiUrl, setApiUrl] = useState('http://127.0.0.1:8000/api');
-  const [primaryModel, setPrimaryModel] = useState('claude-3-5-sonnet');
-  const [fallbackModel, setFallbackModel] = useState('gemini-2-5-flash');
+  const [primaryModel, setPrimaryModel] = useState('gemini-2-5-flash');
+  const [fallbackModel, setFallbackModel] = useState('heuristic');
   const [temperature, setTemperature] = useState('0.1');
   const [razorpayKey, setRazorpayKey] = useState('rzp_test_9A8B7C6D5E4F');
   const [simulateOutage, setSimulateOutage] = useState(false);
@@ -173,9 +173,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   onChange={(e) => setPrimaryModel(e.target.value)}
                   className="w-full bg-[#171A21] border border-[#2A2E3A] rounded-md px-3 py-2 font-mono text-[12px] text-[#E2E2E9] focus:border-[#2F6FED] outline-none"
                 >
-                  <option value="claude-3-5-sonnet">Claude 3.5 Sonnet (Tool Calling &amp; SHAP Weights)</option>
-                  <option value="gemini-2-5-flash">Gemini 2.5 Flash (High Throughput)</option>
+                  <option value="gemini-2-5-flash">Gemini 2.5 Flash (Primary Tool Calling &amp; SHAP Weights)</option>
                   <option value="heuristic">Heuristic Rule Engine (Deterministic Offline)</option>
+                  <option value="claude-3-5-sonnet">Claude 3.5 Sonnet (Optional Secondary)</option>
                 </select>
                 <p className="text-[11px] text-[#8C90A0]">
                   Executes the <code className="text-[#B1C5FF]">classify_failure</code> and <code className="text-[#B1C5FF]">decide_recovery_action</code> schemas.
@@ -192,8 +192,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   onChange={(e) => setFallbackModel(e.target.value)}
                   className="w-full bg-[#171A21] border border-[#2A2E3A] rounded-md px-3 py-2 font-mono text-[12px] text-[#E2E2E9] focus:border-[#2F6FED] outline-none"
                 >
+                  <option value="heuristic">Heuristic Rule Engine (Zero Latency Deterministic)</option>
                   <option value="gemini-2-5-flash">Gemini 2.5 Flash (Rate-Limit Protection)</option>
-                  <option value="heuristic">Heuristic Rule Engine (Zero Latency)</option>
                 </select>
                 <p className="text-[11px] text-[#8C90A0]">
                   Automatically triggered if primary LLM encounters 429 rate limits or network dropouts.

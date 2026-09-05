@@ -71,7 +71,7 @@ export const SupportDocsModal: React.FC<SupportDocsModalProps> = ({ isOpen, onCl
               Model Diagnostic Details
             </h4>
             <p className="font-mono text-[11px] text-[#8C90A0]">
-              Classifier: Claude 3.5 Sonnet Tool-Calling + Heuristic Fallback | Precision & Recall computed per batch | ECE: 0.024
+              Classifier: Gemini 2.5 Flash Tool-Calling + Heuristic Fallback | Precision &amp; Recall computed per batch | ECE: 0.024
             </p>
           </div>
         </div>

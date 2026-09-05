@@ -2,11 +2,14 @@
 
 > **AI-powered revenue recovery copilot for Indian fintech platforms.** Diagnoses failed UPI AutoPay, eNACH mandates, and card transactions using LLM tool-calling, enforces strict compliance guardrails (RBI DND/frequency caps), and autonomously dispatches recovery actions with an immutable decision audit trail.
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-black?style=flat-square&logo=vercel)](https://recovery-copilot-ten.vercel.app/)
 [![Vite](https://img.shields.io/badge/Vite-6.2-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?style=flat-square&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Python](https://img.shields.io/badge/Python-3.13-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org)
 [![Tests](https://img.shields.io/badge/pytest-11%20passed-brightgreen?style=flat-square)](https://pytest.org)
+
+🌐 **Live Application:** [https://recovery-copilot-ten.vercel.app/](https://recovery-copilot-ten.vercel.app/)
 
 ---
 

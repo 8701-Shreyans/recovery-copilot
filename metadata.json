@@ -1,0 +1,6 @@
+{
+  "name": "Recovery Copilot",
+  "description": "AI-powered revenue recovery console with predictive diagnosis, guardrail policies, event traces, and model performance metrics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
